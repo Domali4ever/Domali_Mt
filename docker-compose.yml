@@ -1,0 +1,18 @@
+version: '3'
+services:
+  cassandra:
+    image: cassandra:latest
+    container_name: cassandra-node
+    environment:
+      CASSANDRA_KEYSPACE: domali_cass
+    ports:
+      - "9042:9042"
+
+  python-app:
+    build: .
+    depends_on:
+      - cassandra
+    volumes:
+      - .:/usr/src/app
+    links:
+      - cassandra
