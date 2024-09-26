@@ -1,2 +1,22 @@
 /openapi-generator/
 
+# Ignore various zip and tar files
+*.zip
+*.tar.gz
+*.tar
+
+# Ignore specific directories
+.prefect/
+.vscode/
+cassandra_data/
+config/
+data/
+scripts/
+
+# Ignore specific files
+Docker\ info.docx
+msgraph_example.py
+private_key.pem
+openssl-3.3.2/
+openssl-3.4.0-alpha1/
+
