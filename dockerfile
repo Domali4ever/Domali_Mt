@@ -1,18 +1,15 @@
-# Use Python image as the base
-FROM python:3.11-slim
+# Use Python 3.10 as base image
+FROM python:3.10
 
 # Set the working directory inside the container
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# Copy requirements.txt and install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Cassandra Python driver and Pandas
+RUN pip install pandas cassandra-driver openpyxl
 
-# Copy application code into the container
-COPY . .
+# Copy the local Python script and Excel file into the container
+COPY insert_to_cassandra.py .
+COPY mass_email_campaign_updated.xlsm .
 
-# Expose the port the application runs on
-EXPOSE 8000
-
-# Command to run the application
-CMD ["python", "app.py"]  # Adjust this command to match your application's entry point
+# Run the Python script when the container starts
+CMD ["python", "./insert_to_cassandra.py"]

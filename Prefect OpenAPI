@@ -1,0 +1,5 @@
+from prefect.server.api.server import create_app
+
+
+app = create_app()
+openapi_doc = app.openapi()

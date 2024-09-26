@@ -1,0 +1,20 @@
+# Prefect and related extensions for workflow orchestration
+prefect==3.0.3
+prefect-email
+
+# MSAL for Microsoft Authentication Library, used for secure access to MS Graph
+msal==1.31.0
+
+# MS Graph SDKs for accessing Microsoft Graph services
+msgraph-sdk==1.8.0
+msgraph-core==1.0.0
+
+# Azure Identity for managing authentication with Azure services
+azure-identity==1.12.0
+
+# Requests library for making HTTP requests to external APIs
+requests==2.31.0
+
+# Optional: Cryptography and JWT packages that might be used internally by MSAL or Azure Identity
+cryptography==41.0.3
+PyJWT==2.8.0

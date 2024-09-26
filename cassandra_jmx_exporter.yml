@@ -1,0 +1,47 @@
+# JMX Exporter configuration for Cassandra monitoring
+hostPort: 0.0.0.0:5556  # The port on which the JMX Exporter listens for connections
+ssl: false
+startDelaySeconds: 0
+rules:
+  # Basic JVM metrics like memory usage, CPU, etc.
+  - pattern: 'java.lang<type=Memory><>.*'
+  - pattern: 'java.lang<type=GarbageCollector, name=(\w+)><>CollectionTime'
+    name: jvm_gc_collection_seconds_total
+    labels:
+      gc: "$1"
+  - pattern: 'java.lang<type=GarbageCollector, name=(\w+)><>CollectionCount'
+    name: jvm_gc_collection_count_total
+    labels:
+      gc: "$1"
+
+  # Cassandra metrics
+  - pattern: 'org.apache.cassandra.metrics<type=(\w+), name=(\w+)><>Value'
+    name: cassandra_$1_$2
+    labels:
+      type: "$1"
+      name: "$2"
+
+  # Cache metrics
+  - pattern: 'org.apache.cassandra.metrics<type=Cache, name=(\w+)><>.*'
+    name: cassandra_cache_$1
+
+  # Table metrics for read and write operations
+  - pattern: 'org.apache.cassandra.metrics<type=Table, keyspace=(\w+), scope=(\w+), name=(\w+)><>.*'
+    name: cassandra_table_$3
+    labels:
+      keyspace: "$1"
+      table: "$2"
+
+  # Thread pool metrics
+  - pattern: 'org.apache.cassandra.metrics<type=ThreadPools, path=(\w+), scope=(\w+), name=(\w+)><>.*'
+    name: cassandra_threadpool_$1_$2_$3
+    labels:
+      pool_type: "$1"
+      pool_name: "$2"
+      metric_name: "$3"
+
+  # Storage metrics
+  - pattern: 'org.apache.cassandra.metrics<type=Storage, name=(\w+)><>.*'
+    name: cassandra_storage_$1
+    labels:
+      metric_name: "$1"

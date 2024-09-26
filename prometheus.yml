@@ -1,0 +1,4 @@
+scrape_configs:
+  - job_name: 'cassandra'
+    static_configs:
+      - targets: ['jmx-exporter:5556']

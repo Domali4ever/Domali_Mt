@@ -1,0 +1,89 @@
+# JMX Exporter configuration for enhanced Cassandra monitoring
+hostPort: 0.0.0.0:5556 
+ssl: false
+startDelaySeconds: 0
+rules:
+  # Basic JVM metrics
+  - pattern: 'java.lang<type=Memory><>.*'
+  - pattern: 'java.lang<type=GarbageCollector, name=(\w+)><>CollectionTime'
+    name: jvm_gc_collection_seconds_total
+    labels:
+      gc: "$1"
+  - pattern: 'java.lang<type=GarbageCollector, name=(\w+)><>CollectionCount'
+    name: jvm_gc_collection_count_total
+    labels:
+      gc: "$1"
+
+  # Cassandra metrics
+  - pattern: 'org.apache.cassandra.metrics<type=(\w+), name=(\w+)><>Value'
+    name: cassandra_$1_$2
+    labels:
+      type: "$1"
+      name: "$2"
+
+  # Cache metrics
+  - pattern: 'org.apache.cassandra.metrics<type=Cache, name=(\w+)><>.*'
+    name: cassandra_cache_$1
+
+  # Table metrics
+  - pattern: 'org.apache.cassandra.metrics<type=Table, keyspace=(\w+), scope=(\w+), name=(\w+)><>.*'
+    name: cassandra_table_$3
+    labels:
+      keyspace: "$1"
+      table: "$2"
+
+  # Thread pool metrics
+  - pattern: 'org.apache.cassandra.metrics<type=ThreadPools, path=(\w+), scope=(\w+), name=(\w+)><>.*'
+    name: cassandra_threadpool_$1_$2_$3
+    labels:
+      pool_type: "$1"
+      pool_name: "$2"
+      metric_name: "$3"
+
+  # Storage metrics
+  - pattern: 'org.apache.cassandra.metrics<type=Storage, name=(\w+)><>.*'
+    name: cassandra_storage_$1
+    labels:
+      metric_name: "$1"
+
+  # Client Request metrics
+  - pattern: 'org.apache.cassandra.metrics<type=ClientRequest, name=(\w+), scope=all><>.*'
+    name: cassandra_client_request_$1
+    labels:
+      request_type: "$1" 
+
+  # Compaction metrics
+  - pattern: 'org.apache.cassandra.metrics<type=Compaction, name=(\w+)><>Value'
+    name: cassandra_compaction_$1
+    labels:
+      metric_name: "$1" 
+
+  # Dropped Messages metrics
+  - pattern: 'org.apache.cassandra.metrics<type=DroppedMessage, name=(\w+)><>.*'
+    name: cassandra_dropped_message_$1
+    labels:
+      message_type: "$1"
+
+  # CQL Statement metrics
+  - pattern: 'org.apache.cassandra.metrics<type=CQL, name=(\w+)><>.*'
+    name: cassandra_cql_$1
+    labels:
+      metric_name: "$1"
+
+  # Gossip metrics
+  - pattern: 'org.apache.cassandra.metrics<type=Gossip, name=(\w+)><>.*'
+    name: cassandra_gossip_$1
+    labels:
+      metric_name: "$1"
+
+  # Hints metrics
+  - pattern: 'org.apache.cassandra.metrics<type=Hints, name=(\w+)><>.*'
+    name: cassandra_hints_$1
+    labels:
+      metric_name: "$1"
+
+  # Commit Log metrics
+  - pattern: 'org.apache.cassandra.metrics<type=CommitLog, name=(\w+)><>.*'
+    name: cassandra_commitlog_$1
+    labels:
+      metric_name: "$1"
