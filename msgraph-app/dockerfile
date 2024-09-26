@@ -1,0 +1,25 @@
+# Dockerfile for MS Graph app
+
+# Use an official Python runtime as a parent image
+FROM python:3.11-slim
+
+# Set environment variable for the code path
+ENV CODE_PATH=/app
+
+# Set the working directory inside the container
+WORKDIR ${CODE_PATH}
+
+# Copy the requirements file and install dependencies
+COPY msgraph-app/requirements.txt .
+
+# Install dependencies specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the msgraph_example.py script into the /app directory inside the container
+COPY ./msgraph-app/msgraph-code/msgraph_example.py /app/msgraph_example.py
+
+# Verify that the file is copied correctly (for debugging purposes)
+RUN ls -la ${CODE_PATH}
+
+# Command to run the MS Graph script
+CMD ["python", "${CODE_PATH}/msgraph_example.py"]

@@ -1,0 +1,82 @@
+services:
+  cassandra:
+    image: cassandra:latest
+    container_name: cassandra
+    ports:
+      - "9042:9042"
+    environment:
+      - CASSANDRA_CLUSTER_NAME=TestCluster
+      - CASSANDRA_NUM_TOKENS=256
+      - CASSANDRA_RPC_ADDRESS=0.0.0.0
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+  hasura:
+    image: hasura/graphql-engine:latest
+    container_name: hasura
+    ports:
+      - "8080:8080"
+    environment:
+      - HASURA_GRAPHQL_DATABASE_URL=postgres://postgres:password@postgres:5432/postgres
+      - HASURA_GRAPHQL_ENABLE_CONSOLE=true
+      - HASURA_GRAPHQL_ADMIN_SECRET=youradminsecretkey
+    depends_on:
+      - cassandra
+
+  jmx-exporter:
+    image: bitnami/jmx-exporter:latest
+    container_name: jmx-exporter
+    command: >
+      java -javaagent:/jmx_prometheus_javaagent.jar=5556:/config.yml
+    ports:
+      - "5556:5556"
+    volumes:
+      - ./jmx_exporter_config.yml:/config.yml
+
+  msgraph:
+    build:
+      context: ./msgraph-app
+      dockerfile: Dockerfile
+    container_name: msgraph
+    depends_on:
+      - cassandra
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+    - /mnt/c/Users/Domali/project-root/msgraph-app/msgraph-code:/app 
+    command: python /app/msgraph_example.py  # Update the command to run the script
+
+  prefect:
+    build:
+      # Use a relative path and ensure it correctly points to the Prefect project directory
+      context: .prefect/prefect-main 
+    command: >
+      prefect server start
+    container_name: prefect
+    environment:
+      - PREFECT_LOGGING_LEVEL=INFO
+    ports:
+      - "4200:4200"
+    volumes:
+      - prefect_data:/home/prefect
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+volumes:
+  cassandra_data: null
+  grafana-storage: null
+  prefect_data: null

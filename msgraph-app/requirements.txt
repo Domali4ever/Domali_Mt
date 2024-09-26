@@ -1,0 +1,18 @@
+# Prefect for workflow orchestration and automation
+prefect
+
+# Prefect Email for managing email tasks within workflows
+prefect-email
+
+# MSAL for Microsoft Authentication Library, used for secure access to MS Graph
+msal
+
+# MS Graph SDKs for accessing Microsoft Graph services
+msgraph-sdk
+msgraph-core
+
+# Azure Identity for managing authentication with Azure services
+azure-identity
+
+# Requests for making HTTP requests to external APIs
+requests
