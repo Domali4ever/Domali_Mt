@@ -1,0 +1,14 @@
+# Use an official Ubuntu base image
+FROM ubuntu:22.04
+
+# Install dependencies
+RUN apt-get update && apt-get install -y curl sudo ca-certificates
+
+# Install Ollama
+RUN curl -fsSL https://ollama.com/install.sh | sh
+
+# Expose the port Ollama will run on
+EXPOSE 11434
+
+# Start Ollama on container startup
+CMD ["ollama", "serve"]

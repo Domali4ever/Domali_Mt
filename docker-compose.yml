@@ -1,3 +1,4 @@
+version: '3'
 services:
   cassandra:
     image: cassandra:latest
@@ -8,6 +9,7 @@ services:
       - CASSANDRA_CLUSTER_NAME=TestCluster
       - CASSANDRA_NUM_TOKENS=256
       - CASSANDRA_RPC_ADDRESS=0.0.0.0
+      - CASSANDRA_KEYSPACE=domali_cass
 
   grafana:
     image: grafana/grafana:latest
@@ -51,13 +53,12 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     volumes:
-    - /mnt/c/Users/Domali/project-root/msgraph-app/msgraph-code:/app 
-    command: python /app/msgraph_example.py  # Update the command to run the script
+      - /mnt/c/Users/Domali/project-root/msgraph-app/msgraph-code:/app 
+    command: python /app/msgraph_example.py
 
   prefect:
     build:
-      # Use a relative path and ensure it correctly points to the Prefect project directory
-      context: .prefect/prefect-main 
+      context: .prefect/prefect-main
     command: >
       prefect server start
     container_name: prefect
@@ -75,6 +76,15 @@ services:
       - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  python-app:
+    build: .
+    depends_on:
+      - cassandra
+    volumes:
+      - .:/usr/src/app
+    links:
+      - cassandra
 
 volumes:
   cassandra_data: null

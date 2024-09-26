@@ -1,0 +1,14 @@
+{
+  "name": "cassandra-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.cassandra.CassandraConnector",
+    "tasks.max": "1",
+    "keyspace.name": "domali_cass",
+    "table.name": "email_campaign_domali",
+    "cdc.raw.directory": "/var/lib/cassandra/cdc_raw",
+    "transforms": "route",
+    "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.route.regex": ".*",
+    "transforms.route.replacement": "http://localhost:5678/webhook/new-campaign-entry"
+  }
+}
